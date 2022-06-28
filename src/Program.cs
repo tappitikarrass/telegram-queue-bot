@@ -19,16 +19,18 @@ namespace telegram_queue_bot
                 Db = Redis.GetDatabase();
             }
 
-            Queue q = new("aboba");
-            q.Clear();
-            q.Push("abc");
-            q.Push("olegio");
-            q.Push("olegio");
-            q.Push("vasek1");
-            q.Remove("vasek2");
-            q.Remove("vasek1");
-            q.Push("vasek");
-            Console.WriteLine(q);
+            //Queue q = new("aboba");
+            //q.Clear();
+            //q.Push("abc");
+            //q.Push("olegio");
+            //q.Push("olegio");
+            //q.Push("vasek1");
+            //q.Remove("vasek2");
+            //q.Remove("vasek1");
+            //q.Push("vasek");
+            //Console.WriteLine(q);
+
+            Bot bot = Bot.Instance;
         }
     }
 }
