@@ -8,7 +8,7 @@ namespace telegram_queue_bot
         public static IDatabase? Db;
         public static ConnectionMultiplexer? Redis;
 
-        public static void Main()
+        public static async Task Main()
         {
             {
                 ConfigurationOptions redisConfig = new()
@@ -31,6 +31,7 @@ namespace telegram_queue_bot
             //Console.WriteLine(q);
 
             Bot bot = Bot.Instance;
+            await bot.RunAsync();
         }
     }
 }
