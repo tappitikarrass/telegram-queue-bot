@@ -9,6 +9,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using telegram_queue_bot.Menus;
+using telegram_queue_bot.DataStructures;
 
 namespace telegram_queue_bot
 {
@@ -17,12 +18,18 @@ namespace telegram_queue_bot
         public static Bot Instance { get { return lazy.Value; } }
         private static readonly Lazy<Bot> lazy = new(new Bot());
 
+        public KeyValuePair<long, Queue> CurrentQueues { get; private set; }
+        public List<Queue> Queues { get; private set; }
+
         public TelegramBotClient BotClient { get; private set; }
 
         private Bot()
         {
             var env = ReadEnvironment();
             BotClient = new(env[IEnvNames.BotToken]);
+
+            Queues = new();
+            CurrentQueues = new();
         }
 
         public async Task RunAsync()
@@ -44,6 +51,22 @@ namespace telegram_queue_bot
             // Thread.Sleep(-1);
             Console.ReadLine();
             cts.Cancel();
+        }
+
+        private void RestoreQueuesState()
+        {
+        }
+
+        private void SaveQueuesState()
+        {
+        }
+
+        private void RestoreCurrentQueuesState()
+        {
+        }
+
+        private void SaveCurrentQueuesState()
+        {
         }
 
         private Dictionary<string, string> ReadEnvironment()
@@ -68,6 +91,8 @@ namespace telegram_queue_bot
 
         async Task HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
+            await MainMenu.HandleCallbackQueryAsync(botClient, callbackQuery, cancellationToken);
+            await QueuesListMenu.HandleCallbackQueryAsync(botClient, callbackQuery, cancellationToken);
         }
 
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

@@ -7,42 +7,39 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace telegram_queue_bot.Menus
 {
-    public static class MainMenu
+    public static class QueuesListMenu
     {
-        public static InlineKeyboardMarkup Keyboard = new(new[]
-        {
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData("Queues list", "MainMenu-queuesList")
-            }
-        });
+        public static InlineKeyboardMarkup Keyboard { get => BuildKeyboard(); }
 
         public static async Task Build(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
         {
             var message = callbackQuery.Message;
             if (message == null) return;
+
             await botClient.EditMessageTextAsync(
                 message.Chat.Id,
                 message.MessageId,
-                "*Main menu*",
+                "*Available queues*",
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: Keyboard,
                 cancellationToken: cancellationToken);
         }
 
-        public static async Task HandleMessageAsync(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        private static InlineKeyboardMarkup BuildKeyboard()
         {
-            if (message.Text == null) return;
+            List<InlineKeyboardButton> buttons = new();
 
-            if (message.Text.StartsWith("/start"))
-            {
-                await botClient.SendTextMessageAsync(
-                    message.Chat.Id,
-                    "*Main menu*",
-                    parseMode: ParseMode.MarkdownV2,
-                    replyMarkup: Keyboard,
-                    cancellationToken: cancellationToken);
-            }
+            //foreach (var item in Program.bot.Queues)
+            //{
+            //    buttons.Add(item.Name);
+            //}
+
+            buttons.Add(
+                InlineKeyboardButton.WithCallbackData(
+                    "Back",
+                    "QueuesList-back"));
+
+            return new(buttons);
         }
 
         public static async Task HandleCallbackQueryAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
@@ -50,15 +47,14 @@ namespace telegram_queue_bot.Menus
             if (callbackQuery.Data == null) return;
             switch (callbackQuery.Data)
             {
-                case "MainMenu-queuesList":
+                case "QueuesList-back":
                     {
-                        await QueuesListMenu.Build(botClient, callbackQuery, cancellationToken);
+                        await MainMenu.Build(botClient, callbackQuery, cancellationToken);
                     }
                     break;
                 default:
                     break;
             }
         }
-
     }
 }
