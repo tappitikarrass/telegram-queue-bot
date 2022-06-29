@@ -43,6 +43,22 @@ namespace telegram_queue_bot.Menus
                     replyMarkup: Keyboard,
                     cancellationToken: cancellationToken);
             }
+            if (message.Text.StartsWith("/add_queue"))
+            {
+                var cmdWithArgs = message.Text.Split(" ");
+                if (cmdWithArgs.Length == 2)
+                {
+                    Program.Bot.AddQueue(cmdWithArgs[1]);
+                }
+            }
+            if (message.Text.StartsWith("/remove_queue"))
+            {
+                var cmdWithArgs = message.Text.Split(" ");
+                if (cmdWithArgs.Length == 2)
+                {
+                    Program.Bot.RemoveQueue(cmdWithArgs[1]);
+                }
+            }
         }
 
         public static async Task HandleCallbackQueryAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)

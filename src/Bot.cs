@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using telegram_queue_bot.Menus;
 using telegram_queue_bot.DataStructures;
+using StackExchange.Redis;
 
 namespace telegram_queue_bot
 {
@@ -18,7 +19,7 @@ namespace telegram_queue_bot
         public static Bot Instance { get { return lazy.Value; } }
         private static readonly Lazy<Bot> lazy = new(new Bot());
 
-        public KeyValuePair<long, Queue> CurrentQueues { get; private set; }
+        public Dictionary<long, Queue> CurrentQueues { get; private set; }
         public List<Queue> Queues { get; private set; }
 
         public TelegramBotClient BotClient { get; private set; }
@@ -34,6 +35,9 @@ namespace telegram_queue_bot
 
         public async Task RunAsync()
         {
+            RestoreQueuesState();
+            RestoreCurrentQueuesState();
+
             using var cts = new CancellationTokenSource();
 
             var receiverOptions = new ReceiverOptions
@@ -51,22 +55,86 @@ namespace telegram_queue_bot
             // Thread.Sleep(-1);
             Console.ReadLine();
             cts.Cancel();
+
+            SaveQueuesState();
+            SaveCurrentQueuesState();
+        }
+
+        public void SetCurrentQueue(User user, Queue queue)
+        {
+            CurrentQueues.Remove(user.Id);
+            CurrentQueues.Add(user.Id, queue);
+        }
+
+        public void AddQueue(string name)
+        {
+            if (name == "") return;
+            foreach (var item in Queues)
+            {
+                if (item.Name == name)
+                {
+                    return;
+                }
+            }
+            Queues.Add(new Queue(name));
+            SaveQueuesState();
+        }
+
+        public void RemoveQueue(string name)
+        {
+            if (name == "") return;
+            foreach (var item in Queues)
+            {
+                if (item.Name == name)
+                {
+                    Queues.Remove(item);
+                }
+            }
+            SaveQueuesState();
         }
 
         private void RestoreQueuesState()
         {
+            string queuesSerialized = "" + Program.Db.StringGet(IRedisValueNames.QueuesState);
+            if (queuesSerialized == "") return;
+            foreach (var item in queuesSerialized.Split(" "))
+            {
+                AddQueue(item);
+            }
         }
 
         private void SaveQueuesState()
         {
+            string queuesSerialized = "";
+            foreach (var item in Queues)
+            {
+                queuesSerialized += $"{item.Name} ";
+            }
+            Program.Db.StringSet(IRedisValueNames.QueuesState, queuesSerialized);
         }
 
         private void RestoreCurrentQueuesState()
         {
+            string currentQueuesSerialized = "" + Program.Db.StringGet(IRedisValueNames.CurrentQueuesState);
+            if (currentQueuesSerialized == "") return;
+            foreach (var item in currentQueuesSerialized.Split(" "))
+            {
+                var itemData = item.Split(":");
+                if (itemData.Length == 2)
+                {
+                    CurrentQueues.Add(long.Parse(itemData[0]), new(itemData[1]));
+                }
+            }
         }
 
         private void SaveCurrentQueuesState()
         {
+            string currentQueuesSerialized = "";
+            foreach (var item in CurrentQueues)
+            {
+                currentQueuesSerialized += $"{item.Key}:{item.Value.Name} ";
+            }
+            Program.Db.StringSet(IRedisValueNames.CurrentQueuesState, currentQueuesSerialized);
         }
 
         private Dictionary<string, string> ReadEnvironment()

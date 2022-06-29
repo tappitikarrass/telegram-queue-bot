@@ -27,19 +27,29 @@ namespace telegram_queue_bot.Menus
 
         private static InlineKeyboardMarkup BuildKeyboard()
         {
-            List<InlineKeyboardButton> buttons = new();
+            List<List<InlineKeyboardButton>> rows = new();
 
-            //foreach (var item in Program.bot.Queues)
-            //{
-            //    buttons.Add(item.Name);
-            //}
+            foreach (var item in Program.Bot.Queues)
+            {
+                if (item.Name.ToString() != "")
+                {
+                    rows.Add(
+                        new()
+                        {
+                            InlineKeyboardButton.WithCallbackData(item.Name.ToString(), $"Queue-{item.Name}")
+                        }
+                    );
+                }
+            }
 
-            buttons.Add(
+            rows.Add(new()
+            {
                 InlineKeyboardButton.WithCallbackData(
-                    "Back",
-                    "QueuesList-back"));
+                        "Back",
+                        "QueuesList-back")
+            });
 
-            return new(buttons);
+            return new(rows);
         }
 
         public static async Task HandleCallbackQueryAsync(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)

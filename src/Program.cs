@@ -7,6 +7,7 @@ namespace telegram_queue_bot
     {
         public static IDatabase? Db;
         public static ConnectionMultiplexer? Redis;
+        public static Bot? Bot;
 
         public static async Task Main()
         {
@@ -19,19 +20,8 @@ namespace telegram_queue_bot
                 Db = Redis.GetDatabase();
             }
 
-            //Queue q = new("aboba");
-            //q.Clear();
-            //q.Push("abc");
-            //q.Push("olegio");
-            //q.Push("olegio");
-            //q.Push("vasek1");
-            //q.Remove("vasek2");
-            //q.Remove("vasek1");
-            //q.Push("vasek");
-            //Console.WriteLine(q);
-
-            Bot bot = Bot.Instance;
-            await bot.RunAsync();
+            Bot = Bot.Instance;
+            await Bot.RunAsync();
         }
     }
 }
