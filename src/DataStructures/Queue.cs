@@ -1,5 +1,6 @@
 ﻿using StackExchange.Redis;
 using System.Collections;
+using Telegram.Bot.Types;
 
 namespace telegram_queue_bot.DataStructures
 {
@@ -35,18 +36,26 @@ namespace telegram_queue_bot.DataStructures
             Name = name;
         }
 
-        public void Push(RedisValue item)
+        public void Push(User user)
         {
-            if (!this.Contains(item))
+            if (!this.Contains(user))
             {
-                Program.Db.ListRightPush(Name, item);
+                Program.Db.ListRightPush(Name, $"{user.Id} {user.FirstName} {user.LastName}");
             }
         }
-        public void Remove(RedisValue item)
+        public void Remove(User user)
         {
-            if (this.Contains(item))
+            if (!this.Contains(user)) return;
+
+            var currentQueue = Program.Bot.GetCurrentQueue(user);
+            if (currentQueue == null) return;
+
+            foreach (var item in currentQueue)
             {
-                Program.Db.ListRemove(Name, item);
+                if (item.StartsWith($"{user.Id}"))
+                {
+                    Program.Db.ListRemove(Name, item);
+                }
             }
         }
 
@@ -55,9 +64,16 @@ namespace telegram_queue_bot.DataStructures
             Program.Db.ListTrim(Name, 1, 0);
         }
 
-        public bool Contains(RedisValue item)
+        public bool Contains(User user)
         {
-            return Program.Db.ListRange(Name).Contains(item);
+            foreach (var entry in this)
+            {
+                if (entry.ToString().StartsWith(user.Id.ToString()))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         public IEnumerator<RedisValue> GetEnumerator()
         {

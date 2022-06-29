@@ -116,7 +116,7 @@ namespace telegram_queue_bot.Menus
 
                         if (Program.Bot.QueuesContains(currentQueue.Name.ToString()))
                         {
-                            currentQueue.Push($"{user.Id} {user.FirstName} {user.LastName}");
+                            currentQueue.Push(user);
                             await Build(botClient, callbackQuery, cancellationToken);
                         }
                     }
@@ -132,7 +132,7 @@ namespace telegram_queue_bot.Menus
 
                         if (Program.Bot.QueuesContains(currentQueue.Name.ToString()))
                         {
-                            currentQueue.Remove($"{user.Id} {user.FirstName} {user.LastName}");
+                            currentQueue.Remove(user);
                             await Build(botClient, callbackQuery, cancellationToken);
                         }
                     }
