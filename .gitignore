@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Redis dump
+dump.rdb
+
+# Local env variables
+src/Properties/launchSettings.json
