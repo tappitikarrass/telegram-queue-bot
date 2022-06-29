@@ -1,4 +1,4 @@
-﻿namespace telegram_queue_bot
+﻿namespace telegram_queue_bot.Constants
 {
     public interface IEnvNames
     {

@@ -11,6 +11,7 @@ using Telegram.Bot.Types.Enums;
 using telegram_queue_bot.Menus;
 using telegram_queue_bot.DataStructures;
 using StackExchange.Redis;
+using telegram_queue_bot.Constants;
 
 namespace telegram_queue_bot
 {
