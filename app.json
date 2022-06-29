@@ -1,8 +1,18 @@
 {
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
+  "name": "telegram-queue-bot",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "telegram",
+    "telegram-bot",
+    "redis"
+  ],
+  "description": "Yes another simple telegram bot that can manage multiple queues of users.",
+  "stack": "container",
   "addons": [
     "rediscloud"
   ],
-  "description": "Yes another simple telegram bot that can manage multiple queues of users.",
   "env": {
     "ADMINS": {
       "description": "A string of user_chat_id values, separated by commas.",
@@ -22,14 +32,9 @@
       "required": false
     }
   },
-  "keywords": [
-    "dotnet",
-    "csharp",
-    "telegram",
-    "telegram-bot",
-    "redis"
-  ],
-  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
-  "name": "telegram-queue-bot",
-  "stack": "container"
+  "formation": {
+    "worker": {
+      "quantity": 1
+    }
+  }
 }
