@@ -13,12 +13,12 @@
     "DEV": {
       "description": "",
       "value": "false",
-      "required": "false"
+      "required": false
     },
     "LOG_METHOD": {
       "description": "",
       "value": "none",
-      "required": "false"
+      "required": false
     }
   },
   "keywords": [
