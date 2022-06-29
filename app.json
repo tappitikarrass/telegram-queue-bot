@@ -5,18 +5,19 @@
   "description": "Yes another simple telegram bot that can manage multiple queues of users.",
   "env": {
     "ADMINS": {
-      "description": ""
+      "description": "A string of user_chat_id values, separated by commas.",
+      "required": false
     },
     "BOT_TOKEN": {
-      "description": ""
+      "description": "Telegram bot api token. Created by BotFather."
     },
     "DEV": {
-      "description": "",
+      "description": "If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY).",
       "value": "false",
       "required": false
     },
     "LOG_METHOD": {
-      "description": "",
+      "description": "Log method. Currently only none or stdout.",
       "value": "none",
       "required": false
     }

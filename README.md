@@ -45,7 +45,7 @@ Environment variables table:
 
 | Required | Variable         | Description                                                                  | Example                                     |
 |----------|------------------|------------------------------------------------------------------------------|---------------------------------------------|
-| yes      | `BOT_TOKEN`      | Telegram bot api token. Created by [BotFather](https://t.me/BotFather)       | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
+| yes      | `BOT_TOKEN`      | Telegram bot api token. Created by [BotFather](https://t.me/BotFather).      | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
 | yes      | `REDISCLOUD_URL` | Redis URL is **PROVIDED** by the **Redis Enterprise Cloud** extension.       | `redis://default:password@redishost:12345`  |
 | no       | `ADMINS`         | A string of user_chat_id values, separated by commas.                        | `123456789,872451098`                       |
 | no       | `LOG_METHOD`     | Log method. Currently only `none` or `stdout`.                               | `stdout`                                    |
