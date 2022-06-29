@@ -18,6 +18,9 @@ namespace telegram_queue_bot
 
     public class Bot
     {
+        public readonly ConnectionMultiplexer Redis;
+        public readonly IDatabase Db;
+
         public static Bot Instance { get { return lazy.Value; } }
         private static readonly Lazy<Bot> lazy = new(new Bot());
 
@@ -35,6 +38,30 @@ namespace telegram_queue_bot
             var env = ReadEnvironment();
             BotClient = new(env[IEnvNames.BotToken]);
             Admins = LoadAdmins(env[IEnvNames.Admins]);
+
+            ConfigurationOptions redisConfig;
+
+            if (env[IEnvNames.RedisUrl] == "")
+            {
+                redisConfig = new()
+                {
+                    EndPoints = { IEnvDefaults.EnvRedisUrl }
+                };
+            }
+            else
+            {
+                var redisInfo = env[IEnvNames.RedisUrl].Replace("redis://", "").Split("@");
+                var redisCreds = redisInfo[0].Split(":");
+                redisConfig = new()
+                {
+                    EndPoints = { redisInfo[1] },
+                    User = redisCreds[0],
+                    Password = redisCreds[1]
+                };
+            }
+
+            Redis = ConnectionMultiplexer.Connect(redisConfig);
+            Db = Redis.GetDatabase();
 
             if (env[IEnvNames.LogMethod] != "")
             {
@@ -240,7 +267,7 @@ namespace telegram_queue_bot
 
         private void RestoreQueuesState()
         {
-            string queuesSerialized = "" + Program.Db.StringGet(IRedisValueNames.QueuesState);
+            string queuesSerialized = "" + Program.Bot.Db.StringGet(IRedisValueNames.QueuesState);
             if (queuesSerialized == "") return;
             foreach (var item in queuesSerialized.Split(" "))
             {
@@ -255,12 +282,12 @@ namespace telegram_queue_bot
             {
                 queuesSerialized += $"{item.Name} ";
             }
-            Program.Db.StringSet(IRedisValueNames.QueuesState, queuesSerialized);
+            Program.Bot.Db.StringSet(IRedisValueNames.QueuesState, queuesSerialized);
         }
 
         private void RestoreCurrentQueuesState()
         {
-            string currentQueuesSerialized = "" + Program.Db.StringGet(IRedisValueNames.CurrentQueuesState);
+            string currentQueuesSerialized = "" + Program.Bot.Db.StringGet(IRedisValueNames.CurrentQueuesState);
             if (currentQueuesSerialized == "") return;
             foreach (var item in currentQueuesSerialized.Split(" "))
             {
@@ -279,7 +306,7 @@ namespace telegram_queue_bot
             {
                 currentQueuesSerialized += $"{item.Key}:{item.Value.Name} ";
             }
-            Program.Db.StringSet(IRedisValueNames.CurrentQueuesState, currentQueuesSerialized);
+            Program.Bot.Db.StringSet(IRedisValueNames.CurrentQueuesState, currentQueuesSerialized);
         }
 
         private Dictionary<string, string> ReadEnvironment()
@@ -291,7 +318,7 @@ namespace telegram_queue_bot
             var EnvAdmins = "" + Environment.GetEnvironmentVariable(IEnvNames.Admins);
             var EnvLogMethod = "" + Environment.GetEnvironmentVariable(IEnvNames.LogMethod);
             var EnvDev = "" + Environment.GetEnvironmentVariable(IEnvNames.Dev);
-            if (EnvRedisUrl == "") EnvRedisUrl = IEnvDefaults.EnvRedisUrl;
+            // if (EnvRedisUrl == "") EnvRedisUrl = IEnvDefaults.EnvRedisUrl;
 
             env.Add(IEnvNames.RedisUrl, EnvRedisUrl);
             env.Add(IEnvNames.BotToken, EnvBotToken);

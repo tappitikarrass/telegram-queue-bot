@@ -11,7 +11,7 @@ namespace telegram_queue_bot.DataStructures
         {
             get
             {
-                return Program.Db.ListLength(Name);
+                return Program.Bot.Db.ListLength(Name);
             }
         }
 
@@ -23,7 +23,7 @@ namespace telegram_queue_bot.DataStructures
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return Program.Db.ListGetByIndex(Name, index);
+                return Program.Bot.Db.ListGetByIndex(Name, index);
             }
         }
 
@@ -40,7 +40,7 @@ namespace telegram_queue_bot.DataStructures
         {
             if (!this.Contains(user))
             {
-                Program.Db.ListRightPush(Name, $"{user.Id} {user.FirstName} {user.LastName}");
+                Program.Bot.Db.ListRightPush(Name, $"{user.Id} {user.FirstName} {user.LastName}");
             }
         }
         public void Remove(User user)
@@ -54,14 +54,14 @@ namespace telegram_queue_bot.DataStructures
             {
                 if (item.StartsWith($"{user.Id}"))
                 {
-                    Program.Db.ListRemove(Name, item);
+                    Program.Bot.Db.ListRemove(Name, item);
                 }
             }
         }
 
         public void Clear()
         {
-            Program.Db.ListTrim(Name, 1, 0);
+            Program.Bot.Db.ListTrim(Name, 1, 0);
         }
 
         public bool Contains(User user)
