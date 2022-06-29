@@ -1,0 +1,40 @@
+{
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
+  "name": "telegram-queue-bot",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "telegram",
+    "telegram-bot",
+    "redis"
+  ],
+  "description": "Yes another simple telegram bot that can manage multiple queues of users.",
+  "stack": "container",
+  "addons": [
+    "rediscloud"
+  ],
+  "env": {
+    "ADMINS": {
+      "description": "A string of user_chat_id values, separated by commas.",
+      "required": false
+    },
+    "BOT_TOKEN": {
+      "description": "Telegram bot api token. Created by BotFather."
+    },
+    "DEV": {
+      "description": "If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY).",
+      "value": "false",
+      "required": false
+    },
+    "LOG_METHOD": {
+      "description": "Log method. Currently only none or stdout.",
+      "value": "none",
+      "required": false
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1
+    }
+  }
+}
