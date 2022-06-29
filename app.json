@@ -31,5 +31,5 @@
   ],
   "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
   "name": "telegram-queue-bot",
-  "stack": "heroku-22"
+  "stack": "container"
 }
