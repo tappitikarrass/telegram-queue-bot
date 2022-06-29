@@ -1,38 +1,34 @@
 {
-  "name": "telegram-queue-bot",
-  "description": "Yes another simple telegram bot that can manage multiple queues of users.",
-  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
-  "keywords": [
-      "dotnet",
-      "csharp",
-      "telegram",
-      "telegram-bot",
-      "redis"
-  ],
-  "stack": "heroku-22",
   "addons": [
-      "rediscloud",
-      {
-          "plan": "30",
-          "as": "REDISCLOUD"
-      }
+    "rediscloud"
   ],
+  "description": "Yes another simple telegram bot that can manage multiple queues of users.",
   "env": {
-      "BOT_TOKEN": {
-          "description": ""
-      },
-      "ADMINS": {
-          "description": ""
-      },
-      "DEV": {
-          "description": "",
-          "value": "false",
-          "required": "false"
-      },
-      "LOG_METHOD": {
-          "description": "",
-          "value": "none",
-          "required": "false"
-      }
-  }
+    "ADMINS": {
+      "description": ""
+    },
+    "BOT_TOKEN": {
+      "description": ""
+    },
+    "DEV": {
+      "description": "",
+      "value": "false",
+      "required": "false"
+    },
+    "LOG_METHOD": {
+      "description": "",
+      "value": "none",
+      "required": "false"
+    }
+  },
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "telegram",
+    "telegram-bot",
+    "redis"
+  ],
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/.NET_Logo.svg/2048px-.NET_Logo.svg.png",
+  "name": "telegram-queue-bot",
+  "stack": "heroku-22"
 }
