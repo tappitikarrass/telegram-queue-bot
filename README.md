@@ -8,6 +8,7 @@ Yes another simple telegram bot that can manage multiple queues of users.
 	- [Features](#features)
 	- [Todo](#todo)
 - [Environment variables](#environment-variables)
+	- [Make user an admin](#make-user-an-admin)
 - [Deploy to Heroku](#deploy-to-heroku)
     - [Deploy automatically](#deploy-automatically) 
     - [Deploy manually](#deploy-manually) 
@@ -16,6 +17,10 @@ Yes another simple telegram bot that can manage multiple queues of users.
 	- [Local development dependencies](#local-development-dependencies)
 	- [NuGet dependencies](#nuget-dependencies)
 ## Description
+Yes another simple telegram bot that can manage multiple queues of users.
+
+What this bot can do?
+- Manage multiple queues of users
 
 ### Features
 - [x] Multiple queues support
@@ -31,6 +36,7 @@ Yes another simple telegram bot that can manage multiple queues of users.
 - [ ] Bot settings for each user
 - [ ] Make all database operations async
 - [ ] Queue visibitity
+- [ ] Try to make tests
 
 ## Environment variables
 Set these variables in Heroku dashboard. Heroku will automatically pass them to deployed Docker container.
@@ -50,6 +56,15 @@ Environment variables table:
 | no       | `ADMINS`         | A string of user_chat_id values, separated by commas.                        | `123456789,872451098`                       |
 | no       | `LOG_METHOD`     | Log method. Currently only `none` or `stdout`.                               | `stdout`                                    |
 | no       | `DEV`            | If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY). | `enabled`                                   |
+### Make user an admin
+Run telegram bot command `/get_user_chat_id` by the user you want to make an admin.
+
+Add resulting id to `ADMINS` environment variable in Heroku dashboard.
+
+Separate multiple entries with comma.
+
+> It would be better to keep this id in private, like bot token.<br/>
+Although, I don't know what bad could happen if it's publicly available.
 
 ## Deploy to Heroku
 ### Deploy automatically
