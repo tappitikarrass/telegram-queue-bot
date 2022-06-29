@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -42,22 +43,6 @@ namespace telegram_queue_bot.Menus
                     parseMode: ParseMode.MarkdownV2,
                     replyMarkup: Keyboard,
                     cancellationToken: cancellationToken);
-            }
-            if (message.Text.StartsWith("/add_queue"))
-            {
-                var cmdWithArgs = message.Text.Split(" ");
-                if (cmdWithArgs.Length == 2)
-                {
-                    Program.Bot.AddQueue(cmdWithArgs[1]);
-                }
-            }
-            if (message.Text.StartsWith("/remove_queue"))
-            {
-                var cmdWithArgs = message.Text.Split(" ");
-                if (cmdWithArgs.Length == 2)
-                {
-                    Program.Bot.RemoveQueue(cmdWithArgs[1]);
-                }
             }
         }
 

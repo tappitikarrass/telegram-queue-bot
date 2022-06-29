@@ -21,6 +21,7 @@ namespace telegram_queue_bot
 
         public Dictionary<long, Queue> CurrentQueues { get; private set; }
         public List<Queue> Queues { get; private set; }
+        public List<string> Admins { get; private set; }
 
         public TelegramBotClient BotClient { get; private set; }
 
@@ -28,6 +29,7 @@ namespace telegram_queue_bot
         {
             var env = ReadEnvironment();
             BotClient = new(env[IEnvNames.BotToken]);
+            Admins = LoadAdmins(env[IEnvNames.Admins]);
 
             Queues = new();
             CurrentQueues = new();
@@ -58,6 +60,38 @@ namespace telegram_queue_bot
 
             SaveQueuesState();
             SaveCurrentQueuesState();
+        }
+
+        public bool IsAdmin(Message message)
+        {
+            if (Admins.Contains(message.Chat.Id.ToString()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsAdmin(CallbackQuery callbackQuery)
+        {
+            if (Admins.Contains(callbackQuery.Message.Chat.Id.ToString()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private List<string> LoadAdmins(string envVar)
+        {
+            List<string> admins = new();
+
+            var envVarSplit = envVar.Split(",");
+
+            foreach (var item in envVarSplit)
+            {
+                admins.Add(item);
+            }
+
+            return admins;
         }
 
         public void SetCurrentQueue(User user, Queue queue)
@@ -198,11 +232,12 @@ namespace telegram_queue_bot
 
             var EnvRedisUrl = "" + Environment.GetEnvironmentVariable(IEnvNames.RedisUrl);
             var EnvBotToken = "" + Environment.GetEnvironmentVariable(IEnvNames.BotToken);
-
+            var EnvAdmins = "" + Environment.GetEnvironmentVariable(IEnvNames.Admins);
             if (EnvRedisUrl == "") EnvRedisUrl = IEnvDefaults.EnvRedisUrl;
 
             env.Add(IEnvNames.RedisUrl, EnvRedisUrl);
             env.Add(IEnvNames.BotToken, EnvBotToken);
+            env.Add(IEnvNames.Admins, EnvAdmins);
 
             return env;
         }
@@ -210,6 +245,7 @@ namespace telegram_queue_bot
         async Task HandleMessageAsync(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
         {
             await MainMenu.HandleMessageAsync(botClient, message, cancellationToken);
+            await BotCmds.HandleMessageAsync(botClient, message, cancellationToken);
         }
 
         async Task HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
@@ -221,6 +257,7 @@ namespace telegram_queue_bot
 
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
+            // TODO: Enable stdout logging on env var
             if (update.CallbackQuery != null)
             {
                 Console.WriteLine($"[C] {update.CallbackQuery.Data}");
