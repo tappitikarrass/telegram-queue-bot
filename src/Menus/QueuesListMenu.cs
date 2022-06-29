@@ -19,7 +19,7 @@ namespace telegram_queue_bot.Menus
             await botClient.EditMessageTextAsync(
                 message.Chat.Id,
                 message.MessageId,
-                "*Available queues*",
+                $"*{IMenuMessages.AvailableQueues}*",
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: Keyboard,
                 cancellationToken: cancellationToken);
@@ -45,7 +45,7 @@ namespace telegram_queue_bot.Menus
             rows.Add(new()
             {
                 InlineKeyboardButton.WithCallbackData(
-                        "Back",
+                        $"{IMenuMessages.Back}",
                         "QueuesList-back")
             });
 

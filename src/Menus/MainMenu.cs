@@ -14,7 +14,7 @@ namespace telegram_queue_bot.Menus
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("Queues list", "MainMenu-queuesList")
+                InlineKeyboardButton.WithCallbackData(IMenuMessages.QueuesList, "MainMenu-queuesList")
             }
         });
 
@@ -25,7 +25,7 @@ namespace telegram_queue_bot.Menus
             await botClient.EditMessageTextAsync(
                 message.Chat.Id,
                 message.MessageId,
-                "*Main menu*",
+                $"*{IMenuMessages.MainMenu}*",
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: Keyboard,
                 cancellationToken: cancellationToken);
@@ -39,7 +39,7 @@ namespace telegram_queue_bot.Menus
             {
                 await botClient.SendTextMessageAsync(
                     message.Chat.Id,
-                    "*Main menu*",
+                    $"*{IMenuMessages.MainMenu}*",
                     parseMode: ParseMode.MarkdownV2,
                     replyMarkup: Keyboard,
                     cancellationToken: cancellationToken);
