@@ -64,6 +64,50 @@ namespace telegram_queue_bot
         {
             CurrentQueues.Remove(user.Id);
             CurrentQueues.Add(user.Id, queue);
+            SaveCurrentQueuesState();
+        }
+
+        public Queue? GetCurrentQueue(User user)
+        {
+            foreach (var item in CurrentQueues)
+            {
+                if (item.Key == user.Id)
+                {
+                    return item.Value;
+                }
+            }
+            return null;
+        }
+
+        public bool QueuesContains(string name)
+        {
+            if (name == null || name == "") return false;
+
+            foreach (var item in Queues)
+            {
+                if (item.Name == name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool CurrentQueuesContains(User user)
+        {
+            var currentQueue = GetCurrentQueue(user);
+            if (currentQueue == null) return false;
+
+            foreach (var item in Program.Bot.Queues)
+            {
+                if (currentQueue.Name == item.Name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void AddQueue(string name)
@@ -83,14 +127,25 @@ namespace telegram_queue_bot
         public void RemoveQueue(string name)
         {
             if (name == "") return;
-            foreach (var item in Queues)
+            foreach (var item in Queues.ToList<Queue>())
             {
                 if (item.Name == name)
                 {
+                    item.Clear();
                     Queues.Remove(item);
                 }
             }
             SaveQueuesState();
+
+            foreach (var item in CurrentQueues)
+            {
+                if (item.Value.Name == name)
+                {
+                    CurrentQueues.Remove(item.Key);
+                }
+            }
+
+            SaveCurrentQueuesState();
         }
 
         private void RestoreQueuesState()
@@ -161,6 +216,7 @@ namespace telegram_queue_bot
         {
             await MainMenu.HandleCallbackQueryAsync(botClient, callbackQuery, cancellationToken);
             await QueuesListMenu.HandleCallbackQueryAsync(botClient, callbackQuery, cancellationToken);
+            await QueueMenu.HandleCallbackQueryAsync(botClient, callbackQuery, cancellationToken);
         }
 
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

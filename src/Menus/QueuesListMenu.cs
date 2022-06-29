@@ -36,7 +36,7 @@ namespace telegram_queue_bot.Menus
                     rows.Add(
                         new()
                         {
-                            InlineKeyboardButton.WithCallbackData(item.Name.ToString(), $"Queue-{item.Name}")
+                            InlineKeyboardButton.WithCallbackData(item.Name.ToString(), $"Queue:{item.Name}")
                         }
                     );
                 }
