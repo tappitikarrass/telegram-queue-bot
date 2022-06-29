@@ -139,7 +139,7 @@ namespace telegram_queue_bot.Menus
                     break;
                 case "Queue-back":
                     {
-                        // TODO: Remove currentQueue entry from CurrentQueues dictionary when user close queue menu
+                        Program.Bot.RemoveCurrentQueue(callbackQuery.From);
                         await QueuesListMenu.Build(botClient, callbackQuery, cancellationToken);
                     }
                     break;

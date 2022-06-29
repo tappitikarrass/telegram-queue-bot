@@ -14,6 +14,8 @@ using StackExchange.Redis;
 
 namespace telegram_queue_bot
 {
+    public enum LogMethod { StdOut, None };
+
     public class Bot
     {
         public static Bot Instance { get { return lazy.Value; } }
@@ -25,11 +27,50 @@ namespace telegram_queue_bot
 
         public TelegramBotClient BotClient { get; private set; }
 
+        public LogMethod LogMethod { get; private set; }
+        public bool isDevMode { get; private set; }
+
         private Bot()
         {
             var env = ReadEnvironment();
             BotClient = new(env[IEnvNames.BotToken]);
             Admins = LoadAdmins(env[IEnvNames.Admins]);
+
+            if (env[IEnvNames.LogMethod] != "")
+            {
+                switch (env[IEnvNames.LogMethod].ToLower())
+                {
+                    case "stdout":
+                        LogMethod = LogMethod.StdOut;
+                        break;
+                    default:
+                        LogMethod = LogMethod.None;
+                        break;
+                }
+            }
+            else
+            {
+                LogMethod = LogMethod.None;
+            }
+
+            if (env[IEnvNames.Dev] != "")
+            {
+                switch (env[IEnvNames.Dev].ToLower())
+                {
+                    case "true":
+                    case "enabled":
+                    case "1":
+                        isDevMode = true;
+                        break;
+                    default:
+                        isDevMode = false;
+                        break;
+                }
+            }
+            else
+            {
+                isDevMode = false;
+            }
 
             Queues = new();
             CurrentQueues = new();
@@ -54,8 +95,15 @@ namespace telegram_queue_bot
                 cancellationToken: cts.Token
             );
 
-            // Thread.Sleep(-1);
-            Console.ReadLine();
+            if (!isDevMode)
+            {
+                Thread.Sleep(-1);
+            }
+            else
+            {
+                Console.WriteLine($"isDevMode: {isDevMode}");
+                Console.ReadLine();
+            }
             cts.Cancel();
 
             SaveQueuesState();
@@ -92,6 +140,14 @@ namespace telegram_queue_bot
             }
 
             return admins;
+        }
+
+        public void RemoveCurrentQueue(User user)
+        {
+            if (CurrentQueues.Remove(user.Id))
+            {
+                SaveCurrentQueuesState();
+            }
         }
 
         public void SetCurrentQueue(User user, Queue queue)
@@ -233,11 +289,15 @@ namespace telegram_queue_bot
             var EnvRedisUrl = "" + Environment.GetEnvironmentVariable(IEnvNames.RedisUrl);
             var EnvBotToken = "" + Environment.GetEnvironmentVariable(IEnvNames.BotToken);
             var EnvAdmins = "" + Environment.GetEnvironmentVariable(IEnvNames.Admins);
+            var EnvLogMethod = "" + Environment.GetEnvironmentVariable(IEnvNames.LogMethod);
+            var EnvDev = "" + Environment.GetEnvironmentVariable(IEnvNames.Dev);
             if (EnvRedisUrl == "") EnvRedisUrl = IEnvDefaults.EnvRedisUrl;
 
             env.Add(IEnvNames.RedisUrl, EnvRedisUrl);
             env.Add(IEnvNames.BotToken, EnvBotToken);
             env.Add(IEnvNames.Admins, EnvAdmins);
+            env.Add(IEnvNames.LogMethod, EnvLogMethod);
+            env.Add(IEnvNames.Dev, EnvDev);
 
             return env;
         }
@@ -257,15 +317,20 @@ namespace telegram_queue_bot
 
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            // TODO: Enable stdout logging on env var
             if (update.CallbackQuery != null)
             {
-                Console.WriteLine($"[C] {update.CallbackQuery.Data}");
+                if (LogMethod == LogMethod.StdOut)
+                {
+                    Console.WriteLine($"[C] {update.CallbackQuery.Data}");
+                }
                 await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
             }
             else if (update.Message != null)
             {
-                Console.WriteLine($"[M] {update.Message.Text}");
+                if (LogMethod == LogMethod.StdOut)
+                {
+                    Console.WriteLine($"[M] {update.Message.Text}");
+                }
                 await HandleMessageAsync(botClient, update.Message, cancellationToken);
             }
         }
