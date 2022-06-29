@@ -87,13 +87,14 @@ namespace telegram_queue_bot.DataStructures
 
         public override string ToString()
         {
-            string ans = "";
-
+            string ans = "```\n";
+            int counter = 0;
             foreach (var item in this)
             {
-                ans += $"{item}\n";
+                var itemSplit = item.ToString().Split(" ");
+                ans += $"{++counter,2}. {itemSplit[1]} {itemSplit[2]}\n";
             }
-            return ans;
+            return $"{ans}\n```";
         }
 
         public bool Equals(Queue? other)

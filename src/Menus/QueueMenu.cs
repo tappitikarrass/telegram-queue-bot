@@ -76,7 +76,7 @@ namespace telegram_queue_bot.Menus
             await botClient.EditMessageTextAsync(
                 message.Chat.Id,
                 message.MessageId,
-                $"*{IMenuMessages.Queue} {currentQueue.Name}:*\n{currentQueue}",
+                $"*{IMenuMessages.Queue} _{currentQueue.Name}_:*\n{currentQueue}",
                 parseMode: ParseMode.MarkdownV2,
                 replyMarkup: BuildKeyboard(callbackQuery),
                 cancellationToken: cancellationToken);
