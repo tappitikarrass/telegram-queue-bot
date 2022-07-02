@@ -1,6 +1,10 @@
 # telegram-queue-bot
 
-![](https://img.shields.io/github/license/tappitikarrass/telegram-queue-bot)
+[![](https://img.shields.io/github/license/tappitikarrass/telegram-queue-bot)](#)
+[![](https://img.shields.io/badge/-Telegram%20Bot-Telegram?logo=Telegram&colorA=white&colorB=white)](#)
+<br>
+[![](https://img.shields.io/badge/-.NET%206-512BD4?logo=dotnet&logoColor=white)](#)
+[![](https://img.shields.io/badge/-Redis-DC382D?logo=Redis&logoColor=white)](#)<br>
 
 ## Synopsis
 Yes another simple telegram bot that can manage multiple queues of users.
