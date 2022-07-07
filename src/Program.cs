@@ -1,5 +1,4 @@
 ﻿using StackExchange.Redis;
-using telegram_queue_bot.DataStructures;
 
 namespace telegram_queue_bot
 {

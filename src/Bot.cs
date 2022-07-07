@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -60,9 +55,23 @@ namespace telegram_queue_bot
                     Password = redisCreds[1]
                 };
             }
+            try
+            {
+                Redis = ConnectionMultiplexer.Connect(redisConfig);
+            }
+            catch (RedisConnectionException)
+            {
+                ExceptionHandlers.RedisConnectionHandler();
+            }
 
-            Redis = ConnectionMultiplexer.Connect(redisConfig);
-            Db = Redis.GetDatabase();
+            try
+            {
+                Db = Redis.GetDatabase();
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
 
             if (env[IEnvNames.LogMethod] != "")
             {
@@ -149,6 +158,8 @@ namespace telegram_queue_bot
 
         public bool IsAdmin(CallbackQuery callbackQuery)
         {
+            if (callbackQuery.Message == null) return false;
+
             if (Admins.Contains(callbackQuery.Message.Chat.Id.ToString()))
             {
                 return true;
@@ -268,7 +279,17 @@ namespace telegram_queue_bot
 
         private void RestoreQueuesState()
         {
-            string queuesSerialized = "" + Program.Bot.Db.StringGet(IRedisValueNames.QueuesState);
+            string queuesSerialized = "";
+
+            try
+            {
+                queuesSerialized += Program.Bot.Db.StringGet(IRedisValueNames.QueuesState);
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
+
             if (queuesSerialized == "") return;
             foreach (var item in queuesSerialized.Split(" "))
             {
@@ -283,12 +304,29 @@ namespace telegram_queue_bot
             {
                 queuesSerialized += $"{item.Name} ";
             }
-            Program.Bot.Db.StringSet(IRedisValueNames.QueuesState, queuesSerialized);
+            try
+            {
+                Program.Bot.Db.StringSet(IRedisValueNames.QueuesState, queuesSerialized);
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
         }
 
         private void RestoreCurrentQueuesState()
         {
-            string currentQueuesSerialized = "" + Program.Bot.Db.StringGet(IRedisValueNames.CurrentQueuesState);
+            string currentQueuesSerialized = "";
+
+            try
+            {
+                currentQueuesSerialized += Program.Bot.Db.StringGet(IRedisValueNames.CurrentQueuesState);
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
+
             if (currentQueuesSerialized == "") return;
             foreach (var item in currentQueuesSerialized.Split(" "))
             {
@@ -307,7 +345,15 @@ namespace telegram_queue_bot
             {
                 currentQueuesSerialized += $"{item.Key}:{item.Value.Name} ";
             }
-            Program.Bot.Db.StringSet(IRedisValueNames.CurrentQueuesState, currentQueuesSerialized);
+
+            try
+            {
+                Program.Bot.Db.StringSet(IRedisValueNames.CurrentQueuesState, currentQueuesSerialized);
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
         }
 
         private Dictionary<string, string> ReadEnvironment()
