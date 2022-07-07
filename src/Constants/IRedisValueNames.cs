@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace telegram_queue_bot
+namespace telegram_queue_bot.Constants
 {
     public interface IRedisValueNames
     {

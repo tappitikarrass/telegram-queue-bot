@@ -11,7 +11,16 @@ namespace telegram_queue_bot.DataStructures
         {
             get
             {
-                return Program.Bot.Db.ListLength(Name);
+                long length = 0;
+                try
+                {
+                    length = Program.Bot.Db.ListLength(Name);
+                }
+                catch (RedisTimeoutException)
+                {
+                    ExceptionHandlers.RedisTimeoutHandler();
+                }
+                return length;
             }
         }
 
@@ -23,7 +32,18 @@ namespace telegram_queue_bot.DataStructures
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return Program.Bot.Db.ListGetByIndex(Name, index);
+
+                RedisValue value = new();
+
+                try
+                {
+                    value = Program.Bot.Db.ListGetByIndex(Name, index);
+                }
+                catch (RedisTimeoutException)
+                {
+                    ExceptionHandlers.RedisTimeoutHandler();
+                }
+                return value;
             }
         }
 
@@ -40,7 +60,14 @@ namespace telegram_queue_bot.DataStructures
         {
             if (!this.Contains(user))
             {
-                Program.Bot.Db.ListRightPush(Name, $"{user.Id} {user.FirstName} {user.LastName}");
+                try
+                {
+                    Program.Bot.Db.ListRightPush(Name, $"{user.Id} {user.FirstName} {user.LastName}");
+                }
+                catch (RedisTimeoutException)
+                {
+                    ExceptionHandlers.RedisTimeoutHandler();
+                }
             }
         }
         public void Remove(User user)
@@ -54,14 +81,28 @@ namespace telegram_queue_bot.DataStructures
             {
                 if (item.StartsWith($"{user.Id}"))
                 {
-                    Program.Bot.Db.ListRemove(Name, item);
+                    try
+                    {
+                        Program.Bot.Db.ListRemove(Name, item);
+                    }
+                    catch (RedisTimeoutException)
+                    {
+                        ExceptionHandlers.RedisTimeoutHandler();
+                    }
                 }
             }
         }
 
         public void Clear()
         {
-            Program.Bot.Db.ListTrim(Name, 1, 0);
+            try
+            {
+                Program.Bot.Db.ListTrim(Name, 1, 0);
+            }
+            catch (RedisTimeoutException)
+            {
+                ExceptionHandlers.RedisTimeoutHandler();
+            }
         }
 
         public bool Contains(User user)
@@ -99,6 +140,7 @@ namespace telegram_queue_bot.DataStructures
 
         public bool Equals(Queue? other)
         {
+            if (other == null) return false;
             return other.Name == this.Name;
         }
 

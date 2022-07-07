@@ -4,6 +4,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using telegram_queue_bot.Constants;
 using telegram_queue_bot.DataStructures;
 
 namespace telegram_queue_bot.Menus
@@ -19,17 +20,9 @@ namespace telegram_queue_bot.Menus
                 Queue currentQueue;
                 var user = callbackQuery.From;
                 var currentQueueExitsts = Program.Bot.CurrentQueues.TryGetValue(user.Id, out currentQueue);
-                var entryExists = false;
 
-                // Check if entry is in the list
-                foreach (var item in currentQueue)
-                {
-                    if (item.ToString().StartsWith($"{user.Id}"))
-                    {
-                        entryExists = true;
-                        break;
-                    }
-                }
+                if (currentQueue == null) return new(rows);
+                var entryExists = currentQueue.Contains(user);
 
                 if (entryExists)
                 {
