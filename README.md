@@ -55,13 +55,13 @@ as shown [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/enviro
 
 Environment variables table:
 
-| Required | Variable         | Description                                                                  | Example                                     |
-|----------|------------------|------------------------------------------------------------------------------|---------------------------------------------|
-| yes      | `BOT_TOKEN`      | Telegram bot api token. Created by [BotFather](https://t.me/BotFather).      | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
-| yes      | `REDISCLOUD_URL` | Redis URL is **PROVIDED** by the **Redis Enterprise Cloud** extension.       | `redis://default:password@redishost:12345`  |
-| no       | `ADMINS`         | A string of user_chat_id values, separated by commas.                        | `123456789,872451098`                       |
-| no       | `LOG_METHOD`     | Log method. Currently only `none` or `stdout`.                               | `stdout`                                    |
-| no       | `DEV`            | If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY). | `enabled`                                   |
+| Required | Variable         | Description                                                                  | 
+|----------|------------------|------------------------------------------------------------------------------|
+| yes      | `BOT_TOKEN`      | Telegram bot api token. Created by [BotFather](https://t.me/BotFather).      |
+| yes      | `REDISCLOUD_URL` | Redis URL is **AUTOMATICALLY PROVIDED** by the **Redis Enterprise Cloud** extension.       |
+| no       | `ADMINS`         | A string of user_chat_id values, separated by commas.                        |
+| no       | `LOG_METHOD`     | Log method. Currently only `none` or `stdout`.                               |
+| no       | `DEV`            | If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY). |
 ### Make user an admin
 Run telegram bot command `/get_user_chat_id` by the user you want to make an admin.
 
