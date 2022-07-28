@@ -50,18 +50,18 @@ Set these variables in Heroku dashboard. Heroku will automatically pass them to 
 When running locally set environment variables in `lanuchSettings.json` 
 as shown [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-6.0#development-and-launchsettingsjson).
 
-| **DO NOT COMMIT YOUR `launchSettings.json` TO GIT REPOSITORY. IT CONTAINS SENSITIVE DATA.** |
+| **DO NOT COMMIT YOUR `launchSettings.json` TO GIT REPOSITORY. ** |
 |------------------------------------------------------------------------------------|
 
 Environment variables table:
 
 | Required | Variable         | Description                                                                  | 
 |----------|------------------|------------------------------------------------------------------------------|
-| yes      | `BOT_TOKEN`      | Telegram bot api token. Created by [BotFather](https://t.me/BotFather).      |
-| yes      | `REDISCLOUD_URL` | Redis URL is **AUTOMATICALLY PROVIDED** by the **Redis Enterprise Cloud** extension.       |
-| no       | `ADMINS`         | A string of user_chat_id values, separated by commas.                        |
-| no       | `LOG_METHOD`     | Log method. Currently only `none` or `stdout`.                               |
-| no       | `DEV`            | If enabled, you can stop the bot by pressing the Enter key (LOCAL USE ONLY). |
+| yes      | `BOT_TOKEN`      | Telegram bot api token      |
+| yes      | `REDISCLOUD_URL` | Redis URL automatically provided by extension       |
+| no       | `ADMINS`         | A comma-separated list of user_chat_id values.                        |
+| no       | `LOG_METHOD`     | Log method(`none`, `stdout`).                               |
+
 ### Make user an admin
 Run telegram bot command `/get_user_chat_id` by the user you want to make an admin.
 
